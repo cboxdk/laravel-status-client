@@ -11,7 +11,7 @@ weight: 24
 | Order | Kind | Level | When |
 |-------|------|-------|------|
 | 1 | `emergency` | danger | A verified emergency notice, even when no snapshot could be read |
-| 2 | `incident` | critical/major: danger, minor: warning, none: info | Each active incident, worst impact first, then newest |
+| 2 | `incident` | critical/major: danger, minor or unknown: warning, none: info | Each active incident, worst impact first, then newest |
 | 3 | `maintenance` | warning | Each maintenance in progress |
 | 4 | `upcoming_maintenance` | info | Maintenance that starts within `banners.upcoming_within_hours` (48) |
 | 5 | `delayed` | info | The page is stale, only with `banners.show_delayed` |

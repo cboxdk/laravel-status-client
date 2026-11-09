@@ -126,3 +126,16 @@ it('says so when it is not configured', function (): void {
 it('does not read the page until something asks', function (): void {
     $this->fakeStatus()->assertNotRead();
 });
+
+it('shares an unknown indicator as unknown, with the raw value beside it', function (): void {
+    $this->fakeStatus(FakeStatus::fromFile(__DIR__.'/../Fixtures/contract/current-unknown.json'));
+
+    $shared = Status::shared();
+
+    expect($shared['indicator'])->toBe('unknown')
+        ->and($shared['indicator_value'])->toBe('read_only')
+        ->and($shared['description'])->toBe('Read-only mode')
+        ->and(Status::report()->allClear())->toBeFalse();
+
+    $this->artisan('status:check')->expectsOutputToContain('Status:    Unknown (read_only), Read-only mode')->assertSuccessful();
+});

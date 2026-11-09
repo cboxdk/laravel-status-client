@@ -1,0 +1,184 @@
+{
+  "schema": "cbox-status/v1",
+  "version": 7,
+  "generated_at": "2026-11-10T09:58:00Z",
+  "stale_after_seconds": 300,
+  "page": {
+    "id": "01pageid",
+    "name": "Acme",
+    "description": "Status of the Acme platform.",
+    "url": "https://acme.cboxstatus.com",
+    "website_url": "https://acme.test",
+    "timezone": "Europe/Copenhagen",
+    "brand_color": "#0f766e"
+  },
+  "status": {
+    "indicator": "read_only",
+    "description": "Read-only mode"
+  },
+  "groups": [
+    {
+      "id": "grp-platform",
+      "name": "Platform",
+      "components": [
+        "cmp-api",
+        "cmp-signin",
+        "cmp-billing"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "cmp-api",
+      "name": "API",
+      "description": "Public REST API.",
+      "group_id": "grp-platform",
+      "status": "read_only"
+    },
+    {
+      "id": "cmp-signin",
+      "name": "Sign-in",
+      "description": null,
+      "group_id": "grp-platform",
+      "status": "rate_limited"
+    },
+    {
+      "id": "cmp-billing",
+      "name": "Billing",
+      "description": null,
+      "group_id": "grp-platform",
+      "status": "under_maintenance"
+    },
+    {
+      "id": "cmp-docs",
+      "name": "Docs",
+      "description": null,
+      "group_id": null,
+      "status": "operational"
+    }
+  ],
+  "incidents": {
+    "active": [
+      {
+        "id": "inc-minor",
+        "title": "Slow sign-in",
+        "state": "monitoring",
+        "impact": "minor",
+        "started_at": "2026-11-10T08:00:00Z",
+        "resolved_at": null,
+        "updates": [
+          {
+            "id": "upd-3",
+            "state": "investigating",
+            "body": "Sign-in takes longer than usual.",
+            "created_at": "2026-11-10T08:00:00Z",
+            "components": [
+              {
+                "id": "cmp-signin",
+                "status": "degraded_performance"
+              }
+            ]
+          },
+          {
+            "id": "upd-4",
+            "state": "monitoring",
+            "body": "A fix is out; we are watching it.",
+            "created_at": "2026-11-10T08:40:00Z",
+            "components": [
+              {
+                "id": "cmp-signin",
+                "status": "degraded_performance"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "inc-major",
+        "title": "API errors",
+        "state": "postmortem",
+        "impact": "severe",
+        "started_at": "2026-11-10T09:30:00Z",
+        "resolved_at": null,
+        "updates": [
+          {
+            "id": "upd-2",
+            "state": "postmortem",
+            "body": "A database failover is in progress.",
+            "created_at": "2026-11-10T09:45:00Z",
+            "components": [
+              {
+                "id": "cmp-api",
+                "status": "read_only"
+              }
+            ]
+          },
+          {
+            "id": "upd-1",
+            "state": "investigating",
+            "body": "Some API requests fail with 502.",
+            "created_at": "2026-11-10T09:30:00Z",
+            "components": [
+              {
+                "id": "cmp-api",
+                "status": "partial_outage"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "recent": [
+      {
+        "id": "inc-old",
+        "title": "Webhook delays",
+        "state": "archived",
+        "impact": "severe",
+        "started_at": "2026-11-08T10:00:00Z",
+        "resolved_at": "2026-11-08T11:00:00Z",
+        "href": "/p/01pageid/incidents/inc-old.json"
+      }
+    ]
+  },
+  "maintenances": {
+    "active": [
+      {
+        "id": "mnt-now",
+        "title": "Billing database upgrade",
+        "body": "Invoices may be delayed.",
+        "scheduled_for": "2026-11-10T09:00:00Z",
+        "scheduled_until": "2026-11-10T11:00:00Z",
+        "components": [
+          "cmp-billing"
+        ]
+      }
+    ],
+    "upcoming": [
+      {
+        "id": "mnt-soon",
+        "title": "Network maintenance",
+        "body": "",
+        "scheduled_for": "2026-11-11T02:00:00Z",
+        "scheduled_until": "2026-11-11T03:00:00Z",
+        "components": []
+      },
+      {
+        "id": "mnt-later",
+        "title": "Docs migration",
+        "body": "Docs move to a new host.",
+        "scheduled_for": "2026-11-20T02:00:00Z",
+        "scheduled_until": "2026-11-20T03:00:00Z",
+        "components": [
+          "cmp-docs"
+        ]
+      }
+    ]
+  },
+  "links": {
+    "heartbeat": "/heartbeat.json",
+    "emergency": "/p/01pageid/emergency.json"
+  },
+  "fallback_origins": [
+    "https://data.cboxstatus.com"
+  ]
+}

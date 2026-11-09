@@ -42,7 +42,7 @@ class StatusClient
      * For `Inertia::share('status', fn () => Status::shared())`. Plain values only;
      * every string is text, never HTML.
      *
-     * @return array{available: bool, stale: bool, indicator: ?string, description: ?string, page: ?array{name: string, url: string}, emergency: ?array{page_id: string, message: string, posted_at: string, expires_at: ?string}, banners: list<array{kind: string, level: string, role: string, id: string, title: string, body: ?string, label: ?string, url: ?string, starts_at: ?string, ends_at: ?string}>}
+     * @return array{available: bool, stale: bool, indicator: ?string, indicator_value: ?string, description: ?string, page: ?array{name: string, url: string}, emergency: ?array{page_id: string, message: string, posted_at: string, expires_at: ?string}, banners: list<array{kind: string, level: string, role: string, id: string, title: string, body: ?string, label: ?string, url: ?string, starts_at: ?string, ends_at: ?string}>}
      */
     public function shared(): array
     {
@@ -53,6 +53,7 @@ class StatusClient
             'available' => $report->available(),
             'stale' => $report->stale,
             'indicator' => $report->indicator()?->value,
+            'indicator_value' => $report->snapshot?->status->indicatorValue,
             'description' => $report->snapshot?->status->description,
             'page' => $page === null ? null : ['name' => $page->name, 'url' => $page->url],
             'emergency' => $report->emergency?->toArray(),

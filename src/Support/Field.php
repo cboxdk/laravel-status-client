@@ -137,24 +137,20 @@ class Field
     }
 
     /**
+     * A contract enum. v1 is additive, and a new value is an additive change, so a value
+     * this client does not know yet maps to `$unknown` instead of failing the snapshot.
+     * The caller keeps the raw string next to the case.
+     *
      * @template T of BackedEnum
      *
      * @param  array<mixed>  $data
      * @param  class-string<T>  $enum
+     * @param  T  $unknown
      * @return T
      */
-    public static function enum(array $data, string $key, string $enum, string $path): BackedEnum
+    public static function enum(array $data, string $key, string $enum, BackedEnum $unknown, string $path): BackedEnum
     {
-        $value = $data[$key] ?? null;
-        $case = is_string($value) ? $enum::tryFrom($value) : null;
-
-        if ($case === null) {
-            $allowed = implode(', ', array_map(fn (BackedEnum $case): string => (string) $case->value, $enum::cases()));
-
-            throw InvalidSnapshot::field($path.'.'.$key, 'one of '.$allowed);
-        }
-
-        return $case;
+        return $enum::tryFrom(self::string($data, $key, $path)) ?? $unknown;
     }
 
     public static function parseTime(mixed $value): ?CarbonImmutable

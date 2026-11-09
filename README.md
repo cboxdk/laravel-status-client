@@ -16,6 +16,10 @@ layout.
 It reads only public files. It has no API key and never talks to the Cbox Status
 control plane.
 
+The contract is additive, so a page may use a status, state or impact this version does
+not know yet. The client still reads that page: the value becomes `Unknown` (never
+"operational"), and the raw string stays available, e.g. `$component->statusValue`.
+
 ## Install
 
 ```bash

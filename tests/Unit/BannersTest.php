@@ -83,3 +83,14 @@ it('never links anything but http(s)', function () use ($now): void {
 
     expect((new DefaultBanners)->for(new StatusReport($report->snapshot, false, emergency: $notice), $now)[0]->url)->toBeNull();
 });
+
+it('shows incidents with unknown impact and state as visible warnings with their own words', function () use ($now): void {
+    $report = new StatusReport(snapshot: Snapshot::fromArray(fixtureJson('current-unknown.json')), stale: false);
+
+    $banners = (new DefaultBanners)->for($report, $now);
+
+    expect(ids($banners))->toBe(['inc-major', 'inc-minor', 'mnt-now', 'mnt-soon'])
+        ->and($banners[0]->level)->toBe(BannerLevel::Warning)
+        ->and($banners[0]->label)->toBe('Postmortem')
+        ->and($report->allClear())->toBeFalse();
+});

@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Cbox\StatusClient\Contracts\Banners;
 use Cbox\StatusClient\Snapshot\Incident;
 use Cbox\StatusClient\Snapshot\IncidentImpact;
+use Cbox\StatusClient\Snapshot\IncidentState;
 use Cbox\StatusClient\Snapshot\Maintenance;
 use Cbox\StatusClient\StatusReport;
 
@@ -65,13 +66,14 @@ class DefaultBanners implements Banners
                 BannerKind::Incident,
                 match ($incident->impact) {
                     IncidentImpact::Critical, IncidentImpact::Major => BannerLevel::Danger,
-                    IncidentImpact::Minor => BannerLevel::Warning,
+                    // A value newer than this client: visible, never alarming, never hidden.
+                    IncidentImpact::Minor, IncidentImpact::Unknown => BannerLevel::Warning,
                     IncidentImpact::None => BannerLevel::Info,
                 },
                 $incident->id,
                 $incident->title,
                 $latest?->body,
-                ($latest->state ?? $incident->state)->label(),
+                $latest === null ? $this->stateLabel($incident->state, $incident->stateValue) : $this->stateLabel($latest->state, $latest->stateValue),
                 $url,
                 $incident->startedAt,
             );
@@ -120,6 +122,12 @@ class DefaultBanners implements Banners
             $maintenance->scheduledFor,
             $maintenance->scheduledUntil,
         );
+    }
+
+    /** A state this client does not know yet is labelled with its own words. */
+    private function stateLabel(IncidentState $state, string $raw): string
+    {
+        return $state === IncidentState::Unknown ? ucfirst(str_replace('_', ' ', $raw)) : $state->label();
     }
 
     /**

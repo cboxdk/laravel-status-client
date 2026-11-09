@@ -8,3 +8,6 @@
   saved 2026-11-09.
 - `current-incident.json`: hand-written, every optional branch filled in. Validated against the
   schema by `tests/Unit/ContractTest.php`.
+- `current-unknown.json`: `current-incident.json` as a later v1 might publish it, with status,
+  state and impact values this client does not know (`read_only`, `rate_limited`, `postmortem`,
+  `severe`, `archived`). It deliberately does not match today's schema; clients must still read it.

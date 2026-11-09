@@ -5,7 +5,8 @@ What this package does today, and what it deliberately does not.
 ## Built and tested
 
 - `current.json` (`cbox-status/v1`) parsed into readonly value objects and enums; strict on
-  required keys and enum values, ignores unknown keys. Fixtures (the live Cbox page and a
+  required keys and types, ignores unknown keys, and maps unknown enum values to `Unknown`
+  with the raw string kept (`current-unknown.json` proves it). Fixtures (the live Cbox page and a
   hand-written one covering every branch) are validated against a copy of the contract's
   JSON Schema, and `toArray()` round-trips them exactly.
 - Origin fallback: primary, configured fallbacks, then the snapshot's `fallback_origins`.

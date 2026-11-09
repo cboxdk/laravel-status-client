@@ -12,6 +12,9 @@ use Cbox\StatusClient\Support\Field;
  */
 readonly class IncidentUpdate
 {
+    /** The raw string from the JSON; differs from `$state->value` only for Unknown. */
+    public string $stateValue;
+
     /**
      * @param  list<ComponentImpact>  $components
      */
@@ -21,7 +24,10 @@ readonly class IncidentUpdate
         public string $body,
         public CarbonImmutable $createdAt,
         public array $components = [],
-    ) {}
+        ?string $stateValue = null,
+    ) {
+        $this->stateValue = $stateValue ?? $state->value;
+    }
 
     /**
      * @param  array<mixed>  $data
@@ -36,10 +42,11 @@ readonly class IncidentUpdate
 
         return new self(
             Field::string($data, 'id', $path),
-            Field::enum($data, 'state', IncidentState::class, $path),
+            Field::enum($data, 'state', IncidentState::class, IncidentState::Unknown, $path),
             Field::string($data, 'body', $path),
             Field::time($data, 'created_at', $path),
             $components,
+            Field::string($data, 'state', $path),
         );
     }
 
@@ -50,7 +57,7 @@ readonly class IncidentUpdate
     {
         return [
             'id' => $this->id,
-            'state' => $this->state->value,
+            'state' => $this->stateValue,
             'body' => $this->body,
             'created_at' => $this->createdAt->toIso8601ZuluString(),
             'components' => array_map(fn (ComponentImpact $impact): array => $impact->toArray(), $this->components),

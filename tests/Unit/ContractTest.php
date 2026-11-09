@@ -97,13 +97,41 @@ it('refuses a document missing anything the contract requires', function (string
     ];
 });
 
-it('refuses another schema, an unknown status and a malformed timestamp', function (array $change): void {
+it('refuses another schema, a status that is not a string and a malformed timestamp', function (array $change): void {
     $current = array_replace_recursive(fixtureJson('current-live.json'), $change);
 
     expect(fn () => Snapshot::fromArray($current))->toThrow(InvalidSnapshot::class);
 })->with([
     'schema v2' => [['schema' => 'cbox-status/v2']],
-    'unknown indicator' => [['status' => ['indicator' => 'on_fire']]],
+    'indicator not a string' => [['status' => ['indicator' => 3]]],
     'not RFC 3339' => [['generated_at' => '10/11/2026']],
     'zero stale_after_seconds' => [['stale_after_seconds' => 0]],
 ]);
+
+it('reads values added to the contract after this client, keeping the raw strings', function (): void {
+    $snapshot = Snapshot::fromArray(fixtureJson('current-unknown.json'));
+    $incident = $snapshot->activeIncidents[1];
+    $recent = $snapshot->recentIncidents[0];
+
+    expect($snapshot->status->indicator)->toBe(ComponentStatus::Unknown)
+        ->and($snapshot->status->indicatorValue)->toBe('read_only')
+        ->and($snapshot->component('cmp-api')?->status)->toBe(ComponentStatus::Unknown)
+        ->and($snapshot->component('cmp-signin')?->statusValue)->toBe('rate_limited')
+        ->and($snapshot->component('cmp-docs')?->statusValue)->toBe('operational')
+        ->and($incident->state)->toBe(IncidentState::Unknown)
+        ->and($incident->stateValue)->toBe('postmortem')
+        ->and($incident->impact)->toBe(IncidentImpact::Unknown)
+        ->and($incident->impactValue)->toBe('severe')
+        ->and($incident->updates[0]->stateValue)->toBe('postmortem')
+        ->and($incident->updates[0]->components[0]->status)->toBe(ComponentStatus::Unknown)
+        ->and($recent->stateValue)->toBe('archived')
+        ->and($recent->impact)->toBe(IncidentImpact::Unknown);
+
+    // Written back as it was read: the raw strings survive, not 'unknown'.
+    expect($snapshot->toArray())->toEqual(fixtureJson('current-unknown.json'));
+});
+
+it('never ranks an unknown status as operational', function (): void {
+    expect(ComponentStatus::Unknown->severity())->toBeGreaterThan(ComponentStatus::Operational->severity())
+        ->and(IncidentImpact::Unknown->severity())->toBe(IncidentImpact::Minor->severity());
+});

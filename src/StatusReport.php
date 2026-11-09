@@ -44,7 +44,7 @@ readonly class StatusReport
         return $this->snapshot?->status->indicator;
     }
 
-    /** Operational, fresh, nothing active, no emergency notice. */
+    /** Operational, fresh, nothing active, no emergency notice. An unknown indicator is never all clear. */
     public function allClear(): bool
     {
         return $this->snapshot !== null

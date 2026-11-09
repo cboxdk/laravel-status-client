@@ -38,6 +38,24 @@ Arrays exist only at the edges: decoded JSON on the way in (`fromArray`) and
 ## Contract
 
 The parser follows `cbox-status/v1`. It refuses a document missing a required key or
-holding a value outside an enum, and ignores keys it does not know, because v1 only
-grows. The test suite validates its fixtures against a copy of the contract's JSON
-Schema.
+holding a value of the wrong type, and ignores keys it does not know, because v1 only
+grows.
+
+## Unknown values
+
+v1 can also grow by adding a new value to a status, state or impact. The client reads
+such a page instead of skipping it:
+
+| Field | Unknown value becomes | Raw string |
+|-------|-----------------------|------------|
+| `status.indicator` | `ComponentStatus::Unknown` | `OverallStatus::$indicatorValue` |
+| component and update `status` | `ComponentStatus::Unknown` | `$statusValue` |
+| incident and update `state` | `IncidentState::Unknown` | `$stateValue` |
+| incident `impact` | `IncidentImpact::Unknown` | `$impactValue` |
+
+`Unknown` is never treated as operational: `allClear()` is false, and it ranks with
+degraded performance. An unknown impact shows as a warning banner; an unknown state is
+labelled with its own words ("Postmortem"). `toArray()` writes the raw strings back.
+
+The test suite validates its fixtures against a copy of the contract's JSON Schema, and
+reads `current-unknown.json`, a page with values this client does not know.

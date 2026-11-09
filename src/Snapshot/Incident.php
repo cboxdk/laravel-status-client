@@ -13,6 +13,11 @@ use Cbox\StatusClient\Support\Field;
  */
 readonly class Incident
 {
+    /** The raw strings from the JSON; they differ from the enum values only for Unknown. */
+    public string $stateValue;
+
+    public string $impactValue;
+
     /**
      * @param  list<IncidentUpdate>  $updates
      */
@@ -24,7 +29,12 @@ readonly class Incident
         public CarbonImmutable $startedAt,
         public ?CarbonImmutable $resolvedAt = null,
         public array $updates = [],
-    ) {}
+        ?string $stateValue = null,
+        ?string $impactValue = null,
+    ) {
+        $this->stateValue = $stateValue ?? $state->value;
+        $this->impactValue = $impactValue ?? $impact->value;
+    }
 
     /**
      * @param  array<mixed>  $data
@@ -40,11 +50,13 @@ readonly class Incident
         return new self(
             id: Field::string($data, 'id', $path),
             title: Field::string($data, 'title', $path),
-            state: Field::enum($data, 'state', IncidentState::class, $path),
-            impact: Field::enum($data, 'impact', IncidentImpact::class, $path),
+            state: Field::enum($data, 'state', IncidentState::class, IncidentState::Unknown, $path),
+            impact: Field::enum($data, 'impact', IncidentImpact::class, IncidentImpact::Unknown, $path),
             startedAt: Field::time($data, 'started_at', $path),
             resolvedAt: Field::nullableTime($data, 'resolved_at', $path),
             updates: $updates,
+            stateValue: Field::string($data, 'state', $path),
+            impactValue: Field::string($data, 'impact', $path),
         );
     }
 
@@ -88,8 +100,8 @@ readonly class Incident
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'state' => $this->state->value,
-            'impact' => $this->impact->value,
+            'state' => $this->stateValue,
+            'impact' => $this->impactValue,
             'started_at' => $this->startedAt->toIso8601ZuluString(),
             'resolved_at' => $this->resolvedAt?->toIso8601ZuluString(),
             'updates' => array_map(fn (IncidentUpdate $update): array => $update->toArray(), $this->updates),

@@ -7,6 +7,7 @@ use Cbox\StatusClient\Contracts\StatusReader;
 use Cbox\StatusClient\Facades\Status;
 use Cbox\StatusClient\Http\HttpStatusReader;
 use Cbox\StatusClient\Http\NullStatusReader;
+use Cbox\StatusClient\Snapshot\ComponentStatus;
 use Cbox\StatusClient\Tests\TestCase;
 
 const CURRENT = TestCase::PRIMARY.'/p/01pageid/current.json';
@@ -201,4 +202,17 @@ it('keeps an emergency notice when every snapshot origin is down', function (): 
 
     expect($report->available())->toBeFalse()
         ->and($report->emergency?->pageId)->toBe('01pageid');
+});
+
+it('reads a page that uses values newer than this client instead of skipping it', function (): void {
+    $current = fixtureJson('current-unknown.json');
+    $current['generated_at'] = '2026-11-10T09:59:00Z';
+    $this->network([CURRENT => $current, BEAT => heartbeat('2026-11-10T09:59:30Z')]);
+
+    $report = Status::refresh();
+
+    expect($report->origin)->toBe(TestCase::PRIMARY)
+        ->and($report->indicator())->toBe(ComponentStatus::Unknown)
+        ->and($report->snapshot?->status->indicatorValue)->toBe('read_only')
+        ->and($this->requested())->toBe([CURRENT, BEAT]);
 });

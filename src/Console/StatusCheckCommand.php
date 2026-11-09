@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cbox\StatusClient\Console;
 
+use Cbox\StatusClient\Snapshot\ComponentStatus;
 use Cbox\StatusClient\StatusClient;
 use Cbox\StatusClient\StatusConfig;
 use Illuminate\Console\Command;
@@ -52,7 +53,10 @@ class StatusCheckCommand extends Command
             $this->error('No origin answered with page '.$config->pageId.' and nothing is cached.');
         } else {
             $this->line(sprintf('<info>%s</info> (%s)', $snapshot->page->name, $snapshot->page->url));
-            $this->line(sprintf('Status:    %s, %s', $snapshot->status->indicator->label(), $snapshot->status->description));
+            $indicator = $snapshot->status->indicator === ComponentStatus::Unknown
+                ? 'Unknown ('.$snapshot->status->indicatorValue.')'
+                : $snapshot->status->indicator->label();
+            $this->line(sprintf('Status:    %s, %s', $indicator, $snapshot->status->description));
             $this->line('Origin:    '.($report->origin ?? 'unknown').($report->fetchFailed ? ' (last known, every origin failed)' : ''));
             $age = $report->heartbeatAge();
             $this->line(sprintf('Heartbeat: %s, %s', $age === null ? 'none' : $age.'s ago', $report->stale ? '<comment>stale</comment>' : 'fresh'));

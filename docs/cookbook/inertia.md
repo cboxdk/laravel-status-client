@@ -27,7 +27,9 @@ The shape:
 type StatusShared = {
   available: boolean
   stale: boolean
-  indicator: 'operational' | 'degraded_performance' | 'partial_outage' | 'major_outage' | 'under_maintenance' | null
+  // 'unknown' when the page uses a status newer than this package; never treat it as operational
+  indicator: 'operational' | 'degraded_performance' | 'partial_outage' | 'major_outage' | 'under_maintenance' | 'unknown' | null
+  indicator_value: string | null // the raw value from the page, e.g. 'read_only'
   description: string | null
   page: { name: string; url: string } | null
   emergency: { page_id: string; message: string; posted_at: string; expires_at: string | null } | null
@@ -58,4 +60,5 @@ A React layout:
 ))}
 ```
 
-Render every field as text. Never pass `body` to `dangerouslySetInnerHTML` or `v-html`.
+Render every field as text. Handle `indicator: 'unknown'` with a neutral style and the
+page's `description`; never fall back to "all systems operational". Never pass `body` to `dangerouslySetInnerHTML` or `v-html`.
