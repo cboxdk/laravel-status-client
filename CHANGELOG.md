@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 - 2026-11-09
 
 - First version: typed `cbox-status/v1` snapshot, origin fallback, heartbeat freshness,
   Ed25519 emergency notices (sodium), cache with stale-if-error, Blade banner component,
