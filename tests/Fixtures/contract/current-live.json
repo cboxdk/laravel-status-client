@@ -1,0 +1,90 @@
+{
+  "schema": "cbox-status/v1",
+  "version": 2,
+  "generated_at": "2026-11-09T14:01:51Z",
+  "stale_after_seconds": 300,
+  "page": {
+    "id": "01m708vt2qwrtpzk61e80vaby8",
+    "name": "Cbox",
+    "description": "Status of the Cbox platform.",
+    "url": "https://cbox.cboxstatus.com",
+    "website_url": "https://cbox.dk",
+    "timezone": "UTC",
+    "brand_color": null
+  },
+  "status": {
+    "indicator": "operational",
+    "description": "All systems operational"
+  },
+  "groups": [
+    {
+      "id": "01m708vt4wh30g7btcfas12wyn",
+      "name": "Platform",
+      "components": [
+        "01m708vt56f6a5xjeyh5b6ypc0",
+        "01m708vt5fbb1xf5c15xdtkpc5",
+        "01m708vt5r95e2wpx6hwm63fxw",
+        "01m708vt61gy4pzh1xp17xtfjf",
+        "01m708vt6am8mdxhcc5e7ydn1k",
+        "01m708vt6jvsyjghtfdvvtcszk"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "01m708vt56f6a5xjeyh5b6ypc0",
+      "name": "Cbox ID",
+      "description": "Sign-in, organizations and identity APIs.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    },
+    {
+      "id": "01m708vt5fbb1xf5c15xdtkpc5",
+      "name": "Cbox Billing",
+      "description": "Plans, checkout, invoices and usage.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    },
+    {
+      "id": "01m708vt5r95e2wpx6hwm63fxw",
+      "name": "Cbox Engage",
+      "description": "Product events, email and automations.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    },
+    {
+      "id": "01m708vt61gy4pzh1xp17xtfjf",
+      "name": "Cbox Telemetry",
+      "description": "Ingest, query and the Telemetry app.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    },
+    {
+      "id": "01m708vt6am8mdxhcc5e7ydn1k",
+      "name": "Cbox Signals",
+      "description": "Event ingest, detectors and signal webhooks.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    },
+    {
+      "id": "01m708vt6jvsyjghtfdvvtcszk",
+      "name": "Cbox Infra",
+      "description": "Hosting platform and deployments.",
+      "group_id": "01m708vt4wh30g7btcfas12wyn",
+      "status": "operational"
+    }
+  ],
+  "incidents": {
+    "active": [],
+    "recent": []
+  },
+  "maintenances": {
+    "active": [],
+    "upcoming": []
+  },
+  "links": {
+    "heartbeat": "/heartbeat.json",
+    "emergency": "/p/01m708vt2qwrtpzk61e80vaby8/emergency.json"
+  },
+  "fallback_origins": []
+}

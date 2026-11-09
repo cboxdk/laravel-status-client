@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cboxstatus.com/schema/current.v1.json",
+  "title": "Cbox Status page snapshot (current.json), contract cbox-status/v1",
+  "description": "Public, read-only. Additive changes keep v1; anything else is v2.",
+  "type": "object",
+  "required": ["schema", "version", "generated_at", "stale_after_seconds", "page", "status", "groups", "components", "incidents", "maintenances", "links", "fallback_origins"],
+  "properties": {
+    "schema": { "const": "cbox-status/v1" },
+    "version": { "type": "integer", "minimum": 1 },
+    "generated_at": { "$ref": "#/$defs/timestamp" },
+    "stale_after_seconds": { "type": "integer", "minimum": 1 },
+    "page": {
+      "type": "object",
+      "required": ["id", "name", "url", "timezone"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": ["string", "null"] },
+        "url": { "type": "string", "format": "uri" },
+        "website_url": { "type": ["string", "null"] },
+        "timezone": { "type": "string" },
+        "brand_color": { "type": ["string", "null"] }
+      }
+    },
+    "status": {
+      "type": "object",
+      "required": ["indicator", "description"],
+      "properties": {
+        "indicator": { "$ref": "#/$defs/componentStatus" },
+        "description": { "type": "string" }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "components"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "components": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status", "group_id"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "group_id": { "type": ["string", "null"] },
+          "status": { "$ref": "#/$defs/componentStatus" }
+        }
+      }
+    },
+    "incidents": {
+      "type": "object",
+      "required": ["active", "recent"],
+      "properties": {
+        "active": { "type": "array", "items": { "$ref": "#/$defs/incident" } },
+        "recent": { "type": "array", "items": { "$ref": "#/$defs/incidentSummary" } }
+      }
+    },
+    "maintenances": {
+      "type": "object",
+      "required": ["active", "upcoming"],
+      "properties": {
+        "active": { "type": "array", "items": { "$ref": "#/$defs/maintenance" } },
+        "upcoming": { "type": "array", "items": { "$ref": "#/$defs/maintenance" } }
+      }
+    },
+    "links": {
+      "type": "object",
+      "required": ["heartbeat", "emergency"],
+      "properties": {
+        "heartbeat": { "type": "string" },
+        "emergency": { "type": "string" }
+      }
+    },
+    "fallback_origins": { "type": "array", "items": { "type": "string", "format": "uri" } }
+  },
+  "$defs": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "componentStatus": { "enum": ["operational", "degraded_performance", "partial_outage", "major_outage", "under_maintenance"] },
+    "incidentState": { "enum": ["investigating", "identified", "monitoring", "resolved"] },
+    "incidentSummary": {
+      "type": "object",
+      "required": ["id", "title", "state", "impact", "started_at", "resolved_at", "href"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "state": { "$ref": "#/$defs/incidentState" },
+        "impact": { "enum": ["none", "minor", "major", "critical"] },
+        "started_at": { "$ref": "#/$defs/timestamp" },
+        "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+        "href": { "type": ["string", "null"] }
+      }
+    },
+    "incident": {
+      "type": "object",
+      "required": ["id", "title", "state", "impact", "started_at", "resolved_at", "updates"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "state": { "$ref": "#/$defs/incidentState" },
+        "impact": { "enum": ["none", "minor", "major", "critical"] },
+        "started_at": { "$ref": "#/$defs/timestamp" },
+        "resolved_at": { "type": ["string", "null"], "format": "date-time" },
+        "updates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "state", "body", "created_at", "components"],
+            "properties": {
+              "id": { "type": "string" },
+              "state": { "$ref": "#/$defs/incidentState" },
+              "body": { "type": "string" },
+              "created_at": { "$ref": "#/$defs/timestamp" },
+              "components": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id", "status"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "status": { "$ref": "#/$defs/componentStatus" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "maintenance": {
+      "type": "object",
+      "required": ["id", "title", "body", "scheduled_for", "scheduled_until", "components"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "scheduled_for": { "$ref": "#/$defs/timestamp" },
+        "scheduled_until": { "$ref": "#/$defs/timestamp" },
+        "components": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
